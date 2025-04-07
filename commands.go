@@ -8,7 +8,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -23,20 +23,39 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 map locations",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 map locations",
+			callback:    commandMapb,
+		},
 	}
 }
 
-func commandExit() error {
+func commandExit(cfg *config) error {
 	fmt.Printf("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(cfg *config) error {
 	fmt.Printf("Welcome to the Pokedex!")
 	fmt.Printf("Usage: \n")
 	for _, value := range getCommands() {
 		fmt.Printf("%s: %s\n", value.name, value.description)
 	}
+	return nil
+}
+
+func commandMap(cfg *config) error {
+	pokeAPI.getLocationArea("0", "20")
+	return nil
+}
+
+func commandMapb(cfg *config) error {
 	return nil
 }
