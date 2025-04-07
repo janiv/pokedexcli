@@ -1,15 +1,13 @@
 package main
 
 type config struct {
-	locationOffset int
-	locationLimit  int
+	Next     string
+	Previous string
 }
 
-func NewConfig() config {
-	//These are just the defaults when you hit the api
-	//Need to add stuff to increment, decrement
-	return config{
-		locationOffset: 0,
-		locationLimit:  20,
+func newConfig() *config {
+	return &config{
+		Next:     "https://pokeapi.co/api/v2/location-area",
+		Previous: "",
 	}
 }

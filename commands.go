@@ -50,12 +50,3 @@ func commandHelp(cfg *config) error {
 	}
 	return nil
 }
-
-func commandMap(cfg *config) error {
-	pokeAPI.getLocationArea("0", "20")
-	return nil
-}
-
-func commandMapb(cfg *config) error {
-	return nil
-}

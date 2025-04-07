@@ -9,8 +9,8 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
-	cfg := NewConfig()
 	coms := getCommands()
+	cfg := newConfig()
 	for {
 		fmt.Print("Pokedex ->")
 		scanner.Scan()
@@ -19,7 +19,7 @@ func main() {
 		given_command := user_slice[0]
 		val, ok := coms[given_command]
 		if ok {
-			val.callback(&cfg)
+			val.callback(cfg)
 		} else {
 			fmt.Println("Unknown command")
 		}
