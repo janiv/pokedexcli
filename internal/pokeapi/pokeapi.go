@@ -2,6 +2,7 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -27,7 +28,7 @@ type ExtraStruct struct {
 func NewExtraStruct() *ExtraStruct {
 	var es ExtraStruct
 	es.client = http.Client{}
-	dur, _ := time.ParseDuration("1m")
+	dur, _ := time.ParseDuration("10s")
 	es.cache = *pokecache.NewCache(dur)
 	return &es
 }
@@ -44,6 +45,7 @@ func (es *ExtraStruct) MapAPI(url string) ([]string, string, string, error) {
 		for i := range la.Results {
 			res[i] = la.Results[i].Name
 		}
+		fmt.Printf("%s was in cache!\n", url)
 		return res, la.Next, la.Previous, nil
 	} else {
 		resp, err := http.Get(url)
@@ -66,27 +68,4 @@ func (es *ExtraStruct) MapAPI(url string) ([]string, string, string, error) {
 		}
 		return res, la.Next, la.Previous, nil
 	}
-}
-
-// returns 20 locations, next, and previous urls
-func mapAPICall(url string) ([]string, string, string, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, "", "", err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, "", "", err
-	}
-	la := LocationAreas{}
-	json_err := json.Unmarshal(body, &la)
-	if json_err != nil {
-		return nil, "", "", err
-	}
-	res := make([]string, 20)
-	for i := range la.Results {
-		res[i] = la.Results[i].Name
-	}
-	return res, la.Next, la.Previous, nil
 }
