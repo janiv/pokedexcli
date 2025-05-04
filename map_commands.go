@@ -61,3 +61,22 @@ func commandExplore(cfg *config, args ...string) error {
 	}
 	return nil
 }
+
+func commandCatch(cfg *config, args ...string) error {
+	base_url := "https://pokeapi.co/api/v2/pokemon/"
+	pokemon := args[1]
+	url := base_url + pokemon
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon)
+	res, err := cfg.ES.Catch(url, pokemon)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	if res {
+		fmt.Printf("%s was caught!\n", pokemon)
+		return nil
+	} else {
+		fmt.Printf("%s escaped!\n", pokemon)
+		return nil
+	}
+}
