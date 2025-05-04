@@ -19,7 +19,7 @@ func main() {
 		given_command := user_slice[0]
 		val, ok := coms[given_command]
 		if ok {
-			val.callback(cfg)
+			val.callback(cfg, user_slice...)
 		} else {
 			fmt.Println("Unknown command")
 		}
