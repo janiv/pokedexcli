@@ -342,10 +342,24 @@ type Pokemon struct {
 	} `json:"types"`
 	Weight int `json:"weight"`
 }
+
+type PokemonSummary struct {
+	Name           string
+	Height         int
+	Weight         int
+	Hp             int
+	Attack         int
+	Defense        int
+	SpecialAttack  int
+	SpecialDefense int
+	Speed          int
+	Type1          string
+	Type2          string
+}
 type ExtraStruct struct {
 	client  http.Client
 	cache   pokecache.Cache
-	pokedex map[string]Pokemon
+	Pokedex map[string]Pokemon
 }
 
 func NewExtraStruct() *ExtraStruct {
@@ -353,7 +367,7 @@ func NewExtraStruct() *ExtraStruct {
 	es.client = http.Client{}
 	dur, _ := time.ParseDuration("10s")
 	es.cache = *pokecache.NewCache(dur)
-	es.pokedex = make(map[string]Pokemon)
+	es.Pokedex = make(map[string]Pokemon)
 	return &es
 }
 
@@ -441,7 +455,7 @@ func (es *ExtraStruct) Catch(url string, pokemonName string) (bool, error) {
 		}
 		base_exp := poke.BaseExperience
 		if wasCaught(base_exp) {
-			es.pokedex[pokemonName] = poke
+			es.Pokedex[pokemonName] = poke
 			return true, nil
 		} else {
 			return false, nil
@@ -464,7 +478,7 @@ func (es *ExtraStruct) Catch(url string, pokemonName string) (bool, error) {
 		}
 		base_exp := poke.BaseExperience
 		if wasCaught(base_exp) {
-			es.pokedex[pokemonName] = poke
+			es.Pokedex[pokemonName] = poke
 			return true, nil
 		} else {
 			return false, nil
@@ -472,8 +486,29 @@ func (es *ExtraStruct) Catch(url string, pokemonName string) (bool, error) {
 	}
 }
 
-func (es *ExtraStruct) Inspect(pokemonName string) (bool, []string, error) {
-	return false, nil, nil
+func (es *ExtraStruct) Inspect(pokemonName string) (bool, PokemonSummary) {
+	val, ok := es.Pokedex[pokemonName]
+	res := PokemonSummary{}
+	if !ok {
+		return false, res
+	} else {
+		res.Name = val.Name
+		res.Height = val.Height
+		res.Weight = val.Weight
+		res.Hp = val.Stats[0].BaseStat
+		res.Attack = val.Stats[1].BaseStat
+		res.Defense = val.Stats[2].BaseStat
+		res.SpecialAttack = val.Stats[3].BaseStat
+		res.SpecialDefense = val.Stats[4].BaseStat
+		res.Speed = val.Stats[5].BaseStat
+		res.Type1 = val.Types[0].Type.Name
+		if len(val.Types) > 1 {
+			res.Type2 = val.Types[1].Type.Name
+		} else {
+			res.Type2 = ""
+		}
+		return true, res
+	}
 }
 
 func wasCaught(catchRate int) bool {
