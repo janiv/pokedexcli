@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 type LocationAreas struct {
@@ -47,6 +48,16 @@ func commandMapb(cfg *config, args ...string) error {
 }
 
 func commandExplore(cfg *config, args ...string) error {
-	fmt.Println(args[1])
+	base_url := strings.Split(cfg.Next, "?")[0]
+	url := base_url + "/" + args[1]
+	res, err := cfg.ES.Explore(url)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Found Pokemon:")
+	for i := range res {
+		fmt.Printf("  - %s\n", res[i])
+	}
 	return nil
 }
